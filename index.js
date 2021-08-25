@@ -5,7 +5,8 @@ import router from './router/index.js';
 import fileUpload from 'express-fileupload';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
+import cors from 'cors';
+// import bodyParser from 'body-parser';
 // 1st get the __filename and then __dirname
 // both these CommonJs variables are not in ES modules, as per Node.org
 // we have to replicate with import.meta.url
@@ -16,7 +17,8 @@ dotenv.config();
 
 const PORT = process.env.PORT || 5000;
 const app = express();
-
+// app.use(bodyParser());
+app.use(cors());
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, 'static')));
 // TODO set options for fileUpload (fileSize)!

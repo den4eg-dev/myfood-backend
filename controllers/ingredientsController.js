@@ -26,17 +26,16 @@ class IngredientsController {
 
         options = {
           ...options,
-          ...(options.search = {
-            name: { $regex: req.query.searchByName, $options: 'i' },
-          }),
+          search: {
+            title: { $regex: req.query.searchByName, $options: 'i' },
+          },
         };
       }
-      console.log({});
       if (req.query.protein) {
         match.protein = { $gt: 70 };
       }
 
-      const data = await Model.find({ ...options })
+      const data = await Model.find({ ...options.search })
         .sort(sort)
         .limit(limit)
         .skip(step);
@@ -76,12 +75,11 @@ class IngredientsController {
 
   async update(req, res, next) {
     try {
-      const { id } = req.params;
-      const newObj = req.body;
-      const updatedIngredient = await Model.findByIdAndUpdate(
-        id,
-        { ...newObj },
-        { new: true }
+      // console.log('im in controller req.files  ', req.files);
+      const updatedIngredient = await IngredientsService.update(
+        req.params,
+        req.body,
+        req.files
       );
       return res.json(updatedIngredient);
     } catch (err) {
