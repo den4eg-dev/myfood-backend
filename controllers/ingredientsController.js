@@ -75,7 +75,6 @@ class IngredientsController {
 
   async update(req, res, next) {
     try {
-      // console.log('im in controller req.files  ', req.files);
       const updatedIngredient = await IngredientsService.update(
         req.params,
         req.body,
@@ -88,9 +87,8 @@ class IngredientsController {
   }
   async delete(req, res, next) {
     try {
-      const { id } = req.params;
-      await Model.findByIdAndDelete(id);
-      return res.json({ message: `Ingredient with ${id} deleted` });
+      const deletedItem = IngredientsService.delete(req.params);
+      return res.json(deletedItem);
     } catch (err) {
       console.log(err.message || err);
     }

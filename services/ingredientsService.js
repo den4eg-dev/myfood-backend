@@ -2,7 +2,7 @@ import Model from '../models/ingredients-model.js';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
 import { fileURLToPath } from 'url';
-// import { unlinkSync } from 'fs';
+import { unlinkSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,7 +27,11 @@ class IngredientsService {
           fat,
           carbs,
           calories,
-          image: { path: `images/${fileName}`, original: image.name },
+          image: {
+            path: `images/${fileName}`,
+            original: image.name,
+            filename: `${fileName}`,
+          },
         });
       } else {
         return await Model.create({ ...body });
@@ -38,19 +42,20 @@ class IngredientsService {
   }
 
   async update(params, body, files) {
-    // console.log('TEST', params, body, files);
+    console.log('TEST', params, body, files);
+
     try {
       if (files) {
-        // unlinkSync(path.resolve(__dirname, '..', 'static/images', fileName));
         const { image } = files;
-        const { protein, fat, carbs, calories, title } = body;
+        const { protein, fat, carbs, calories, title, filename } = body;
         const nameArr = image.name.split('.');
         const fileFormat = nameArr[nameArr.length - 1];
         let fileName = uuidv4() + `.${fileFormat}`;
         await image.mv(
           path.resolve(__dirname, '..', 'static/images', fileName)
         );
-
+        // remove old file======
+        unlinkSync(path.resolve(__dirname, '..', 'static/images', filename));
         return await Model.findByIdAndUpdate(
           { _id: params.id },
           {
@@ -59,7 +64,11 @@ class IngredientsService {
             fat,
             carbs,
             calories,
-            image: { path: `images/${fileName}`, original: image.name },
+            image: {
+              path: `images/${fileName}`,
+              original: image.name,
+              filename: `${fileName}`,
+            },
           },
           { new: true }
         );
@@ -71,6 +80,19 @@ class IngredientsService {
           },
           { new: true }
         );
+    } catch (err) {
+      console.log(err.message || err);
+    }
+  }
+
+  async delete({ id }) {
+    try {
+      const { image } = await Model.findById(id);
+      await Model.findByIdAndDelete(id);
+      unlinkSync(
+        path.resolve(__dirname, '..', 'static/images', image.filename)
+      );
+      return { message: `Ingredient with ${id} deleted` };
     } catch (err) {
       console.log(err.message || err);
     }
