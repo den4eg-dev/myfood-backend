@@ -47,7 +47,7 @@ class IngredientsService {
     try {
       if (files) {
         const { image } = files;
-        const { protein, fat, carbs, calories, title, filename } = body;
+        const { protein, fat, carbs, calories, title, filename = '' } = body;
         const nameArr = image.name.split('.');
         const fileFormat = nameArr[nameArr.length - 1];
         let fileName = uuidv4() + `.${fileFormat}`;
@@ -55,7 +55,8 @@ class IngredientsService {
           path.resolve(__dirname, '..', 'static/images', fileName)
         );
         // remove old file======
-        unlinkSync(path.resolve(__dirname, '..', 'static/images', filename));
+        if (filename)
+          unlinkSync(path.resolve(__dirname, '..', 'static/images', filename));
         return await Model.findByIdAndUpdate(
           { _id: params.id },
           {
@@ -89,9 +90,10 @@ class IngredientsService {
     try {
       const { image } = await Model.findById(id);
       await Model.findByIdAndDelete(id);
-      unlinkSync(
-        path.resolve(__dirname, '..', 'static/images', image.filename)
-      );
+      if (image.filename)
+        unlinkSync(
+          path.resolve(__dirname, '..', 'static/images', image.filename)
+        );
       return { message: `Ingredient with ${id} deleted` };
     } catch (err) {
       console.log(err.message || err);
