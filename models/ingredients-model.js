@@ -15,6 +15,7 @@ const IngredientsSchema = new Schema(
       path: String,
       original: String,
       filename: String,
+      default: '',
     },
   },
   { timestamps: true }

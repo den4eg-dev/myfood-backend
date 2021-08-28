@@ -87,7 +87,8 @@ class IngredientsController {
   }
   async delete(req, res, next) {
     try {
-      const deletedItem = IngredientsService.delete(req.params);
+      const deletedItem = await IngredientsService.delete(req.params);
+      console.log(deletedItem);
       return res.json(deletedItem);
     } catch (err) {
       console.log(err.message || err);

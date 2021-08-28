@@ -88,11 +88,11 @@ class IngredientsService {
 
   async delete({ id }) {
     try {
-      const { image } = await Model.findById(id);
+      const item = await Model.findById(id);
       await Model.findByIdAndDelete(id);
-      if (image.filename)
+      if (item.image.filename)
         unlinkSync(
-          path.resolve(__dirname, '..', 'static/images', image.filename)
+          path.resolve(__dirname, '..', 'static/images', item.image.filename)
         );
       return { message: `Ingredient with ${id} deleted` };
     } catch (err) {
