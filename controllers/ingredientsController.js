@@ -67,6 +67,7 @@ class IngredientsController {
   async create(req, res, next) {
     try {
       const ingredients = await IngredientsService.create(req.body, req.files);
+      console.log('ING', ingredients);
       return res.json(ingredients);
     } catch (err) {
       console.log(err.message || err);

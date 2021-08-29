@@ -28,8 +28,10 @@ class DishesController {
 
   async create(req, res, next) {
     try {
-      const dishes = await DishesService.create(req.body, req.params);
-      return res.json(dishes);
+      console.log('body', req.body);
+      const dish = await DishesService.create(req.body);
+
+      return res.json(dish);
     } catch (err) {
       console.log(err.message || err);
     }
@@ -39,8 +41,7 @@ class DishesController {
     try {
       const updatedIngredient = await DishesService.update(
         req.params,
-        req.body,
-        req.files
+        req.body
       );
       return res.json(updatedIngredient);
     } catch (err) {
